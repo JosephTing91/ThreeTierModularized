@@ -3,10 +3,7 @@ variable "vpc_name_tag" {
 }
 variable "cidr_blocks"  {
   default = ["10.0.0.0/16", "10.0.10.0/24", "10.0.20.0/24", "10.0.30.0/24", "10.0.40.0/24", "10.0.50.0/24", "10.0.60.0/24" ]
-
-
 }
-
 
 resource "aws_vpc" "vpc" {
     cidr_block = var.cidr_blocks[0]

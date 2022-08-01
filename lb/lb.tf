@@ -12,6 +12,10 @@ variable "privlbsg_id" {
 }
 variable "vpc_id" {
 }
+variable "acm_certificate_arn"{
+  value= "arn:aws:acm:us-east-1:701837564712:certificate/ad14c38f-d0e0-487f-81b3-db9bc51f9874"
+}
+
 
 resource "aws_alb" "Web-facing-LB" {
   name               = "web-facing-lb"
@@ -80,6 +84,23 @@ resource "aws_alb_listener" "pub-listener_http" {
     type             = "forward"
   }
 }
+  
+resource "aws_alb_listener" "pub-listener_https" {
+  load_balancer_arn = "${aws_alb.Web-facing-LB.arn}"
+  port              = "443"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${aws_alb_target_group.public-lb-tg.arn}"
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_listener_certificate" "example" {
+  listener_arn    = aws_lb_listener.pub-listener_https.arn
+  certificate_arn = var.acm_certificate_arn
+}
+
 
 resource "aws_alb_listener" "priv-listener_http" {
   load_balancer_arn = "${aws_alb.App-tier-LB.arn}"
@@ -91,4 +112,5 @@ resource "aws_alb_listener" "priv-listener_http" {
     type             = "forward"
   }
 }
+
 
